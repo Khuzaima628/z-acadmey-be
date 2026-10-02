@@ -86,7 +86,7 @@ export const verifyForgotPasswordOtpSchema = joi.object({
     otp: joi.number().integer().min(100000).max(999999).required().messages({
         "number.empty": "OTP is Required",
         "any.required": "OTP is Required",
-        "number.min": "OTP must be at least 6 digits",
+        "number.min":    "OTP must be at least 6 digits",
         "number.max": "OTP cannot exceed 6 digits"
     }),
 });
@@ -99,6 +99,13 @@ export const resetPasswordSchema = joi.object({
     newPassword: joi.string().min(6).max(12).required().trim().messages({
         "string.empty": "Password is Required",
         "any.required": "Password is Required"
+    })
+});
+
+export const refreshTokenSchema = joi.object({
+    refreshToken: joi.string().required().messages({
+        "string.empty": "Refresh token is required",
+        "any.required": "Refresh token is required"
     })
 });
 
