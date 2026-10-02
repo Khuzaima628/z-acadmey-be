@@ -1,17 +1,7 @@
-import { Router, type Express } from "express";
+import authRouter from "@src/routes/authRoutes";
 
-const router = Router();
-
-router.get("/health", (_req, res) => {
-  res.status(200).json({ status: "success", message: "API is running" });
-});
-
-// Feature routers get mounted here, e.g.:
-// router.use("/auth", authRouter);
-// router.use("/products", productRouter);
-
-const mountRoutes = (app: Express): void => {
-  app.use("/api/v1", router);
+const Routes = (app: any) => {
+  app.use("/api/v1/auth", authRouter);
 };
 
-export default mountRoutes;
+export default Routes;

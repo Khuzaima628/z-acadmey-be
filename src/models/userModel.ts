@@ -24,13 +24,11 @@ const userModel = new Schema({
         type: String,
         required: [true, "password is Required"],
         trim: true,
-        minLength: [6, "Password must be at least 6 characters"],
-        maxLength: [12, "Password cannot exceed 12 characters"]
     },
     bio: {
         type: String,
         trim: true,
-        default: "No Bio",
+        default: "No bio available",
         minLength: [10, "Bio must be at least 10 characters"],
         maxLength: [100, "Bio cannot exceed 100 characters"]
     },
@@ -61,9 +59,14 @@ const userModel = new Schema({
     isVerified: {
         type: Boolean,
         default: false
-    }, otp: {
+    },
+    otp: {
         type: Number,
         select: false,
+    },
+    isApprovedByAdmin: {
+        type: Boolean,
+        default: false,
     },
     otpExpiry: {
         type: Date,
