@@ -1,8 +1,7 @@
 import bcrypt from "bcryptjs";
 import type { JwtPayload } from "jsonwebtoken";
 import AppError from "@src/utils/appError";
-import UserModel from "@src/models/userModel";
-import { UserType } from "@src/models/userModel";
+import UserModel, { Role, UserType } from "@src/models/userModel";
 import { verifyOtpType, loginType } from "@src/types/authTypes"
 import { loginAccessToken, loginRefreshToken, forgotPasswordAccessToken, verifyforgotPasswordAccessToken, verifyRefreshToken } from "@src/utils/jwt"
 
@@ -16,7 +15,14 @@ export const registerServices = async (body: UserType) => {
     console.log("THE OTP IS: ".bgBlue, otp);
     const otpExpiry = Date.now() + 10 * 60 * 1000;
     const hashPassword = await bcrypt.hash(body.password, 10)
-    const user = await UserModel.create({ ...body, password: hashPassword, otp, otpExpiry })
+    const isApprovedByAdmin = body.role === Role.STUDENT;
+    const user = await UserModel.create({
+        ...body,
+        password: hashPassword,
+        otp,
+        otpExpiry,
+        isApprovedByAdmin
+    })
     const safeUser = user.toObject()
     delete safeUser.password;
     delete safeUser.otp;
@@ -54,8 +60,9 @@ export const verifyOtpService = async (body: verifyOtpType) => {
     }
 }
 
-export const loginService = async (body: loginType) => {
+export const loginService = async (body: loginType, role: string) => {
     const { email, password, rememberMe } = body;
+    const userRole = role
     if (!email || !password) {
         throw new AppError(400, "Please enter your Email and Password")
     }
@@ -75,7 +82,8 @@ export const loginService = async (body: loginType) => {
     }
     const payload = {
         email,
-        id: user._id
+        id: user._id,
+        userRole: user.role
     }
     const accessToken = loginAccessToken(payload);
     const refreshToken = loginRefreshToken(payload);
@@ -103,7 +111,7 @@ export const forgotPasswordService = async (email: string) => {
 }
 
 export const verifyForgotPasswordOtpService = async (email: string, otp: number) => {
-    const user = await UserModel.findOne({ email })
+    const user = await UserModel.findOne({ email }).select("+otp +otpExpiry")
     if (!user) {
         throw new AppError(404, "User not found")
     }

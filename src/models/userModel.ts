@@ -2,8 +2,9 @@ import { model, models, Schema, type InferSchemaType } from "mongoose"
 
 
 enum Role {
-    INSTRUCTOR = "Instructor",
-    STUDENT = "Student"
+    ADMIN = "Admin",
+    INSTRUCTOR = "instructor",
+    STUDENT = "student"
 }
 const userModel = new Schema({
     fullName: {
