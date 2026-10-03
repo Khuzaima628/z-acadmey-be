@@ -27,7 +27,8 @@ export const verifyOtpController = catchAsync(async (req: Request, res: Response
 
 export const loginController = catchAsync(async (req: Request, res: Response): Promise<void> => {
     const body = req.body;
-    const data = await loginService(body)
+    const { role } = req.params;
+    const data = await loginService(body, role)
     const message = "Login Successful"
     apiResponse.success(res, data, message, 200);
 })
