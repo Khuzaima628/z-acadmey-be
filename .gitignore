@@ -56,3 +56,6 @@ pids/
 
 # Misc
 *.tgz
+
+# mds
+AI_ENGINEER_ROADMAP.md
