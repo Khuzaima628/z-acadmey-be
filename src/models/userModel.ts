@@ -47,6 +47,11 @@ const userModel = new Schema({
         max: [100, "Year of Experince cannot be more than 100"],
         required: function (): boolean { return this.role === Role.INSTRUCTOR }
     },
+    totalEarnings: {
+        type: Number,
+        default: 0,
+        min: [0, "Total earnings cannot be negative"],
+    },
     profilePhoto: {
         type: String,
         trim: true,
