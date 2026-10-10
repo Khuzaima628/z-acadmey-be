@@ -49,3 +49,13 @@ export const getAllStudentsService = async (params: any) => {
     const users = await UserModel.aggregate(buildPipline(params,Role.STUDENT));
     return users;
 }
+
+// Get user by ID and Role (works for both Instructor and Student)
+export const getUserByIdService = async (id: string, role: Role) => {
+    const user = await UserModel.findOne({ _id: id, role });
+    if (!user) {
+        throw new AppError(404, `${role} not found`);
+    }
+    return user;
+};
+
