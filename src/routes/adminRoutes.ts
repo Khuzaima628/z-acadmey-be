@@ -3,7 +3,8 @@ import {
     getAllStudentsController,
     acceptInstructorController,
     getAllInstructorsController,
-    getInstructorByIdController
+    getInstructorByIdController,
+    getStudentByIdController
 } from "@src/controllers/adminController";
 import { protectMiddleware } from "@src/middlewares/protectMiddleware";
 import { restrictMiddleware } from "@src/middlewares/restrictMiddleware";
@@ -18,6 +19,7 @@ adminRouter.post("/instructors/:id/accept", protectMiddleware, restrictMiddlewar
 
 // Students
 adminRouter.get("/students", protectMiddleware, restrictMiddleware(Role.ADMIN), getAllStudentsController);
+adminRouter.get("/students/:id", protectMiddleware, restrictMiddleware(Role.ADMIN), getStudentByIdController);
 
 export default adminRouter;
 
