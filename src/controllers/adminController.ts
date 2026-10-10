@@ -32,3 +32,9 @@ export const getInstructorByIdController = catchAsync(async (req: Request, res: 
     apiResponse.success(res, instructor, "Instructor fetched successfully", 200);
 });
 
+export const getStudentByIdController = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const student = await getUserByIdService(id, Role.STUDENT);
+    apiResponse.success(res, student, "Student fetched successfully", 200);
+});
+
