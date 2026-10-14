@@ -39,7 +39,14 @@ const applySecurity = (app: Express): void => {
   app.use(helmet());
 
   // 3. Body parsers with a 10kb cap, so huge payloads can't exhaust memory.
-  app.use(express.json({ limit: "10kb" }));
+  app.use(
+    express.json({
+      limit: "50kb",
+      verify: (req: any, _res, buf) => {
+        req.rawBody = buf;
+      },
+    })
+  );
   app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
   // 4. Strip "$" and "." keys from body/query/params (NoSQL injection).
