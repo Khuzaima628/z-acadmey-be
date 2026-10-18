@@ -5,7 +5,12 @@ import { Role } from "@src/models/userModel";
 import {
     getInstructorStudentsController,
     getCourseStudentsController,
-    getStudentEnrollmentsForInstructorController
+    getStudentEnrollmentsForInstructorController,
+    getInstructorStatsController,
+    getRevenueByCourseController,
+    getWeeklyEnrollmentsTrendController,
+    getCoursePerformanceController,
+    getRecentReviewsController
 } from "@src/controllers/instructorController";
 
 const instructorRouter = Router();
@@ -14,13 +19,18 @@ const instructorRouter = Router();
 instructorRouter.use(protectMiddleware);
 instructorRouter.use(restrictMiddleware(Role.INSTRUCTOR));
 
-// 1. Get all students enrolled in a specific course (Screen 2: "View Enrollment")
+// Dashboard Stats & Analytics
+instructorRouter.get("/stats", getInstructorStatsController);
+instructorRouter.get("/revenue-by-course", getRevenueByCourseController);
+instructorRouter.get("/weekly-trends", getWeeklyEnrollmentsTrendController);
+
+// Dashboard Tables (Screenshots)
+instructorRouter.get("/course-performance", getCoursePerformanceController);
+instructorRouter.get("/recent-reviews", getRecentReviewsController);
+
+// Students & Course Enrollments
 instructorRouter.get("/courses/:courseId/students", getCourseStudentsController);
-
-// 2. Get a student profile & their courses with this instructor (Screen 3: "View Profile")
 instructorRouter.get("/students/:studentId", getStudentEnrollmentsForInstructorController);
-
-// 3. Get all students across all courses for this instructor
 instructorRouter.get("/students", getInstructorStudentsController);
 
 export default instructorRouter;
