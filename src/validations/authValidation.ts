@@ -109,3 +109,22 @@ export const refreshTokenSchema = joi.object({
     })
 });
 
+export const editProfileSchema = joi.object({
+    fullName: joi.string().min(3).max(30).trim().optional().messages({
+        "string.min": "Full Name must be at least 3 characters",
+        "string.max": "Full Name cannot exceed 30 characters"
+    }),
+    bio: joi.string().min(10).max(500).trim().optional().messages({
+        "string.min": "Bio must be at least 10 characters",
+        "string.max": "Bio cannot exceed 500 characters"
+    }),
+    higerEducation: joi.string().min(2).max(100).trim().optional().messages({
+        "string.max": "Higher Education cannot exceed 100 characters"
+    }),
+    yearOfExperince: joi.number().min(0).max(100).optional().messages({
+        "number.min": "Years of Experience cannot be negative",
+        "number.max": "Years of Experience cannot be more than 100"
+    }),
+    profilePhoto: joi.string().trim().optional()
+});
+
