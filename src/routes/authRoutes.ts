@@ -6,7 +6,9 @@ import {
     forgotPasswordController,
     verifyForgotPasswordOtpController,
     resetPasswordController,
-    refreshTokenController
+    refreshTokenController,
+    getProfileController,
+    editProfileController
 } from "@src/controllers/authController";
 import {
     registerSchema,
@@ -15,9 +17,11 @@ import {
     forgotPasswordSchema,
     verifyForgotPasswordOtpSchema,
     resetPasswordSchema,
-    refreshTokenSchema
+    refreshTokenSchema,
+    editProfileSchema
 } from "@src/validations/authValidation";
 import validateSchemaPayload from "@src/utils/validateSchemaPayload";
+import { protectMiddleware } from "@src/middlewares/protectMiddleware";
 
 const authRouter = Router();
 
@@ -28,5 +32,9 @@ authRouter.post("/forgot-password", validateSchemaPayload(forgotPasswordSchema),
 authRouter.post("/verify-forgot-password-otp", validateSchemaPayload(verifyForgotPasswordOtpSchema), verifyForgotPasswordOtpController);
 authRouter.post("/reset-password", validateSchemaPayload(resetPasswordSchema), resetPasswordController);
 authRouter.post("/refresh-token", validateSchemaPayload(refreshTokenSchema), refreshTokenController);
+
+// Profile endpoints (Requires login)
+authRouter.get("/profile", protectMiddleware, getProfileController);
+authRouter.patch("/profile", protectMiddleware, validateSchemaPayload(editProfileSchema), editProfileController);
 
 export default authRouter;
