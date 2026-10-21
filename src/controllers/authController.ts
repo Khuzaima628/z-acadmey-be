@@ -7,7 +7,9 @@ import {
     forgotPasswordService,
     verifyForgotPasswordOtpService,
     resetPasswordService,
-    refreshTokenRotation
+    refreshTokenRotation,
+    getProfileService,
+    editProfileService
 } from "@src/services/authService";
 import apiResponse from "@src/utils/apiResponse";
 
@@ -59,4 +61,16 @@ export const refreshTokenController = catchAsync(async (req: Request, res: Respo
     const data = await refreshTokenRotation(refreshToken);
     const message = "Token Refreshed Successfully";
     apiResponse.success(res, data, message, 200);
+});
+
+export const getProfileController = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const userId = req.user._id;
+    const user = await getProfileService(userId);
+    apiResponse.success(res, user, "User profile fetched successfully", 200);
+});
+
+export const editProfileController = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const userId = req.user._id;
+    const user = await editProfileService(userId, req.body);
+    apiResponse.success(res, user, "User profile updated successfully", 200);
 });
