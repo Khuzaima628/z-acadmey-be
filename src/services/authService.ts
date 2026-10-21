@@ -174,3 +174,37 @@ export const refreshTokenRotation = async (token: string) => {
 
     return { accessToken, refreshToken };
 };
+
+
+// Get Me Api
+export const getProfileService = async (id: string) => {
+    const userData = await UserModel.findById(id).select("-password -otp -otpExpiry");
+    if (!userData) {
+        throw new AppError(404, "User not found");
+    }
+    return userData;
+};
+
+// Edit Profile Api (Whitelists editable profile fields only)
+export const editProfileService = async (id: string, body: Partial<UserType>) => {
+    const { fullName, bio, higerEducation, yearOfExperince, profilePhoto } = body;
+
+    const allowedUpdates: any = {};
+    if (fullName !== undefined) allowedUpdates.fullName = fullName;
+    if (bio !== undefined) allowedUpdates.bio = bio;
+    if (higerEducation !== undefined) allowedUpdates.higerEducation = higerEducation;
+    if (yearOfExperince !== undefined) allowedUpdates.yearOfExperince = yearOfExperince;
+    if (profilePhoto !== undefined) allowedUpdates.profilePhoto = profilePhoto;
+
+    const updatedUser = await UserModel.findByIdAndUpdate(
+        id,
+        { $set: allowedUpdates },
+        { new: true, runValidators: true }
+    ).select("-password -otp -otpExpiry");
+
+    if (!updatedUser) {
+        throw new AppError(404, "User not found");
+    }
+
+    return updatedUser;
+};
