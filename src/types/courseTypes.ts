@@ -6,6 +6,8 @@ export interface courseType {
     slug: string,
     price: number,
     duration: string,
+    course_time?: string,
+    status?: string,
     level: string,
     category: string,
     rating: number,
