@@ -1,4 +1,4 @@
-import CourseModel from "@src/models/courseModel";
+import CourseModel, { CourseStatus } from "@src/models/courseModel";
 import UserModel from "@src/models/userModel";
 import AppError from "@src/utils/appError";
 import { courseType } from "@src/types/courseTypes";
@@ -29,6 +29,10 @@ const fetchCoursesWithFilters = async (query: any, baseFilter: any = {}) => {
 
   if (query.level) {
     filter.level = query.level.toLowerCase().trim();
+  }
+
+  if (query.status) {
+    filter.status = query.status.toLowerCase().trim();
   }
 
   if (query.instructor && !filter.instructor) {
@@ -78,7 +82,19 @@ export const getCourseByIdService = async (courseId: string, instructorId: strin
     throw new AppError(403, "You are not authorized to access this course");
   }
   return course;
-}
+};
+
+// Get Public Course Details (for students & visitors clicking 'View Details')
+export const getCourseDetailsService = async (courseId: string) => {
+  const course = await CourseModel.findById(courseId).populate(
+    "instructor",
+    "fullName email bio profilePhoto"
+  );
+  if (!course) {
+    throw new AppError(404, "Course not found");
+  }
+  return course;
+};
 
 
 // Update Course Service
