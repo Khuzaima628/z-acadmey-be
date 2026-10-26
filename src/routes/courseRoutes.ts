@@ -2,6 +2,7 @@ import { Router } from "express";
 import { 
     createCourseController, 
     getCourseByIdController, 
+    getCourseDetailsController,
     updateCourseController, 
     deleteCourseController,
     getMyCoursesController,
@@ -16,6 +17,9 @@ const courseRouter = Router();
 
 // 1. Get All Courses (Public catalog with search, filters, pagination)
 courseRouter.get("/", getAllCoursesController);
+
+// Public Course Details (for students & visitors clicking 'View Details')
+courseRouter.get("/details/:id", getCourseDetailsController);
 
 // 2. Create Course Route
 courseRouter.post("/create", protectMiddleware, restrictMiddleware("instructor"), validateSchemaPayload(courseValidation), createCourseController);
