@@ -25,6 +25,13 @@ export enum CourseCategory {
   LANGUAGE = "language",
 }
 
+export enum CourseStatus {
+  DRAFT = "draft",
+  PENDING = "pending",
+  PUBLISHED = "published",
+  REJECTED = "rejected",
+}
+
 const courseSchema = new Schema(
   {
     title: {
@@ -61,8 +68,14 @@ const courseSchema = new Schema(
     },
     course_time: {
       type: String,
-      required: [true, "course time is required"],
       trim: true,
+      default: "",
+    },
+    status: {
+      type: String,
+      enum: Object.values(CourseStatus),
+      default: CourseStatus.PENDING,
+      lowercase: true,
     },
     level: {
       type: String,
