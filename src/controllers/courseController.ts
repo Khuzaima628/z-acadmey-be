@@ -3,6 +3,7 @@ import {
     createCourseService,
     updateCourseService,
     getCourseByIdService,
+    getCourseDetailsService,
     deleteCourseService,
     getMyCoursesService,
     getAllCoursesService
@@ -57,6 +58,14 @@ export const deleteCourseController = catchAsync(async (req: Request, res: Respo
     const courseId = req.params.id;
     const course = await deleteCourseService(courseId, instructorId);
     const message = "Course deleted successfully";
+    apiResponse.success(res, course, message, 200);
+});
+
+// Get Public Course Details (for students & visitors)
+export const getCourseDetailsController = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const courseId = req.params.id;
+    const course = await getCourseDetailsService(courseId);
+    const message = "Course details fetched successfully";
     apiResponse.success(res, course, message, 200);
 });
 
