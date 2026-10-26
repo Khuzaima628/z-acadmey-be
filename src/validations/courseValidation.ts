@@ -1,5 +1,5 @@
 import joi from "joi";
-import { CourseCategory, CourseLevel } from "@src/models/courseModel";
+import { CourseCategory, CourseLevel, CourseStatus } from "@src/models/courseModel";
 
 // Course Validation
 export const courseValidation = joi.object({
@@ -46,6 +46,13 @@ export const courseValidation = joi.object({
   videos: joi.array().items(joi.string()).optional().messages({
     "array.base": "videos must be an array of video URLs",
   }),
+  status: joi
+    .string()
+    .valid(...Object.values(CourseStatus))
+    .optional()
+    .messages({
+      "any.only": "status must be one of: " + Object.values(CourseStatus).join(", "),
+    }),
 });
 
 
@@ -88,4 +95,11 @@ export const courseValidation = joi.object({
   videos: joi.array().items(joi.string()).optional().messages({
     "array.base": "videos must be an array of video URLs",
   }),
+  status: joi
+    .string()
+    .valid(...Object.values(CourseStatus))
+    .optional()
+    .messages({
+      "any.only": "status must be one of: " + Object.values(CourseStatus).join(", "),
+    }),
 });
