@@ -5,7 +5,8 @@ import {
     updateWatchedTimeService,
     getContinueWatchingCoursesService,
     getRecentActivityService,
-    getEnrolledCoursesService
+    getEnrolledCoursesService,
+    createReviewService
 } from "@src/services/studentService";
 
 // 1. Update Watched Time Controller
@@ -39,4 +40,12 @@ export const getEnrolledCoursesController = catchAsync(async (req: Request, res:
 
     const data = await getEnrolledCoursesService(studentId, req.query);
     apiResponse.success(res, data, "Enrolled courses fetched successfully", 200);
+});
+
+// 5. Submit Course Review (Write a Review Modal)
+export const createReviewController = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const studentId = req.user._id;
+
+    const data = await createReviewService(studentId, req.body);
+    apiResponse.success(res, data, "Review submitted successfully", 201);
 });
