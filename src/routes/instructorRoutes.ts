@@ -10,7 +10,8 @@ import {
     getRevenueByCourseController,
     getWeeklyEnrollmentsTrendController,
     getCoursePerformanceController,
-    getRecentReviewsController
+    getRecentReviewsController,
+    getCourseReviewsForInstructorController
 } from "@src/controllers/instructorController";
 
 const instructorRouter = Router();
@@ -30,6 +31,7 @@ instructorRouter.get("/recent-reviews", getRecentReviewsController);
 
 // Students & Course Enrollments
 instructorRouter.get("/courses/:courseId/students", getCourseStudentsController);
+instructorRouter.get("/courses/:courseId/reviews", getCourseReviewsForInstructorController);
 instructorRouter.get("/students/:studentId", getStudentEnrollmentsForInstructorController);
 instructorRouter.get("/students", getInstructorStudentsController);
 
