@@ -9,7 +9,8 @@ import {
     montlyRevenueByCourseService,
     weekWiseEnrollmentsTrend,
     getCoursePerformanceService,
-    getRecentReviewsService
+    getRecentReviewsService,
+    getCourseReviewsForInstructorService
 } from "@src/services/instructorService";
 
 // 1. Get all students enrolled across all instructor courses
@@ -69,4 +70,12 @@ export const getRecentReviewsController = catchAsync(async (req: Request, res: R
     const limit = Number(req.query.limit) || 10;
     const data = await getRecentReviewsService(instructorId, limit);
     apiResponse.success(res, data, "Recent reviews fetched successfully", 200);
+});
+
+// 9. Get specific course reviews screen (Screenshots 2 & 3: Course + Instructor + Reviews)
+export const getCourseReviewsForInstructorController = catchAsync(async (req: Request, res: Response): Promise<void> => {
+    const instructorId = req.user._id;
+    const { courseId } = req.params;
+    const data = await getCourseReviewsForInstructorService(courseId, instructorId);
+    apiResponse.success(res, data, "Course reviews fetched successfully", 200);
 });
