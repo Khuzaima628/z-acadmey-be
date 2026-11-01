@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { protectMiddleware } from "@src/middlewares/protectMiddleware";
 import validateSchemaPayload from "@src/utils/validateSchemaPayload";
-import { updateWatchedTimeValidation } from "@src/validations/studentValidation";
+import { updateWatchedTimeValidation, createReviewValidation } from "@src/validations/studentValidation";
 import {
     updateWatchedTimeController,
     getContinueWatchingCoursesController,
     getRecentActivityController,
-    getEnrolledCoursesController
+    getEnrolledCoursesController,
+    createReviewController
 } from "@src/controllers/studentController";
 
 const studentRouter = Router();
@@ -28,6 +29,13 @@ studentRouter.patch(
     "/watched-time",
     validateSchemaPayload(updateWatchedTimeValidation),
     updateWatchedTimeController
+);
+
+// POST /api/v1/student/review (Write a Review Modal)
+studentRouter.post(
+    "/review",
+    validateSchemaPayload(createReviewValidation),
+    createReviewController
 );
 
 export default studentRouter;
