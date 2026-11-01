@@ -345,3 +345,58 @@ export const getRecentReviewsService = async (instructorId: string, limit: numbe
 
     return reviews;
 };
+
+// 8. Get Course Reviews Screen (Screenshots 2 & 3: Course Card + Instructor Card + All Course Reviews)
+export const getCourseReviewsForInstructorService = async (courseId: string, instructorId: string) => {
+    if (!courseId || !instructorId) {
+        throw new AppError(400, "Course ID and Instructor ID are required");
+    }
+
+    // 1. Fetch course details and verify it belongs to this instructor
+    const course = await CourseModel.findOne({ _id: courseId, instructor: instructorId })
+        .populate("instructor", "fullName email profilePhoto higerEducation yearOfExperince bio");
+
+    if (!course) {
+        throw new AppError(404, "Course not found or not owned by this instructor");
+    }
+
+    // 2. Count active students enrolled in this course
+    const studentsCount = await EnrollmentModel.countDocuments({
+        course: courseId,
+        status: "active"
+    });
+
+    // 3. Fetch all reviews for this course
+    const reviews = await ReviewModel.find({ course: courseId })
+        .populate("student", "fullName profilePhoto email")
+        .sort({ createdAt: -1 });
+
+    // 4. Calculate stats
+    const totalReviews = reviews.length;
+    const avgRating = totalReviews > 0
+        ? Math.round((reviews.reduce((sum: number, r: any) => sum + r.rating, 0) / totalReviews) * 10) / 10
+        : course.rating || 0;
+
+    return {
+        course: {
+            _id: course._id,
+            title: course.title,
+            slug: course.slug,
+            price: course.price,
+            level: course.level,
+            category: course.category,
+            duration: course.duration,
+            course_time: course.course_time,
+            images: course.images,
+            status: course.status,
+            rating: avgRating,
+            studentsCount
+        },
+        instructor: course.instructor,
+        stats: {
+            avgRating,
+            totalReviews
+        },
+        reviews
+    };
+};
