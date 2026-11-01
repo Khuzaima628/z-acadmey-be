@@ -1,6 +1,8 @@
 import { EnrollmentModel } from "@src/models/enrollmentModel";
 import { CourseModel } from "@src/models/courseModel";
 import { ActivityModel, ActivityType } from "@src/models/activityModel";
+import ReviewModel from "@src/models/reviewModel";
+import { Types } from "mongoose";
 import AppError from "@src/utils/appError";
 
 
@@ -101,5 +103,63 @@ export const getEnrolledCoursesService = async (studentId: string, query: any = 
     }
 
     return enrollments;
+};
+
+// 5. Create or Update Course Review (Write a Review Modal)
+export const createReviewService = async (
+    studentId: string,
+    payload: { courseId: string; rating: number; review?: string; feedback?: string }
+) => {
+    const { courseId, rating } = payload;
+    const reviewText = (payload.review || payload.feedback || "").trim();
+
+    if (!studentId || !courseId) {
+        throw new AppError(400, "Student ID and Course ID are required");
+    }
+
+    // 1. Verify course exists
+    const course = await CourseModel.findById(courseId);
+    if (!course) {
+        throw new AppError(404, "Course not found");
+    }
+
+    // 2. Verify student is enrolled in this course
+    const enrollment = await EnrollmentModel.findOne({
+        student: studentId,
+        course: courseId,
+        status: "active"
+    });
+    if (!enrollment) {
+        throw new AppError(403, "You must be enrolled in this course to leave a review");
+    }
+
+    // 3. Upsert review (create new or update existing)
+    const reviewDoc = await ReviewModel.findOneAndUpdate(
+        { student: studentId, course: courseId },
+        {
+            student: studentId,
+            course: courseId,
+            instructor: course.instructor,
+            rating,
+            review: reviewText
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    // 4. Recalculate and update average course rating
+    const stats = await ReviewModel.aggregate([
+        { $match: { course: new Types.ObjectId(courseId) } },
+        {
+            $group: {
+                _id: "$course",
+                avgRating: { $avg: "$rating" }
+            }
+        }
+    ]);
+
+    const avgRating = stats.length > 0 ? Math.round(stats[0].avgRating * 10) / 10 : rating;
+    await CourseModel.findByIdAndUpdate(courseId, { rating: avgRating });
+
+    return reviewDoc;
 };
 
